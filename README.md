@@ -4,7 +4,7 @@
 
 ## Documentation
 Light reading on the backend package.
-- [CTDFjorder Python package](https://github.com/nikothomas/CTDFjorder)
+- [CTDFjorder Python package](#https://github.com/nikothomas/CTDFjorder)
 Dense reading on the backend package.
 - [Read the Docs](#https://nikothomas.github.io/CTDFjorder/CTDFjorder/CTDFjorder.html)
 
