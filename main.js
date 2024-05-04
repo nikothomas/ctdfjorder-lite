@@ -1,11 +1,30 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { exec, spawn } = require('child_process');
 const { join } = require("path");
+const { promisify } = require('util');
+
+const execPromise = promisify(exec);
 
 let pythonProcess;
 let mainWindow;
+let loadingWindow;
 
-function createWindow() {
+function createLoadingWindow() {
+    loadingWindow = new BrowserWindow({
+        width: 400,
+        height: 300,
+        frame: false,
+        transparent: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    loadingWindow.loadFile(join(__dirname, 'loading.html'));
+}
+
+function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -14,9 +33,10 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
         },
+        show: false,
     });
 
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile(join(__dirname, 'index.html'));
 
     ipcMain.on('run-python', (event, folderPath, type, plots) => {
         try {
@@ -28,8 +48,8 @@ function createWindow() {
         }
 
         // Run the Python script
-        const pythonPath = join(__dirname, 'venv/bin/python');
-        const scriptPath = join(__dirname, 'venv/bin/CTDFjorder-cli');
+        const pythonPath = join(process.resourcesPath, 'venv', 'bin', 'python');
+        const scriptPath = join(process.resourcesPath, 'venv', 'bin', 'CTDFjorder-cli');
         const args = [type, plots || 'False'];
 
         pythonProcess = spawn(pythonPath, [scriptPath, ...args], {
@@ -43,9 +63,49 @@ function createWindow() {
     });
 }
 
-app.whenReady().then(() => {
-    // ... (rest of the code for creating virtual environment and installing package)
-});
+async function setupEnvironment() {
+    createLoadingWindow();
+
+    const venvPath = join(process.resourcesPath, 'venv');
+
+    try {
+        // Check if virtual environment exists
+        await execPromise(`test -d "${venvPath}"`);
+        console.log('Virtual environment already exists.');
+    } catch (error) {
+        console.log('Virtual environment does not exist. Creating...');
+
+        try {
+            // Create virtual environment with Python 3.11
+            await execPromise(`python3.11 -m venv "${venvPath}"`);
+            console.log('Virtual environment created successfully with Python 3.11.');
+        } catch (error) {
+            console.error('Failed to create virtual environment. Please run the app as an administrator.', error);
+            dialog.showErrorBox('Permission Denied', 'Failed to create virtual environment. Please run the app as an administrator.');
+            app.quit();
+            return;
+        }
+    }
+
+    // Install ctdfjorder package
+    try {
+        await execPromise(`"${join(venvPath, 'bin', 'pip')}" install ctdfjorder==0.0.39`);
+        console.log('ctdfjorder package installed successfully.');
+    } catch (error) {
+        console.error('Failed to install ctdfjorder package. Please run the app as an administrator.', error);
+        dialog.showErrorBox('Permission Denied', 'Failed to install ctdfjorder package. Please run the app as an administrator.');
+        app.quit();
+        return;
+    }
+
+    loadingWindow.close();
+    createMainWindow();
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
+}
+
+app.whenReady().then(setupEnvironment);
 
 app.on('window-all-closed', () => {
     // Kill the Python subprocess if it's still running
@@ -66,6 +126,6 @@ app.on('before-quit', () => {
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+        createMainWindow();
     }
 });
