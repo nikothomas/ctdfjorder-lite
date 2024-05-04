@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ctdfjorder-lite</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>ctdfjorder-lite</h1>
+<p>Drop a folder containing rsk files and a mastersheet "FjordPhyto MASTER SHEET.xlsx"</p>
+<div class="dropbox-container">
+    <div id="mergeDropbox" class="dropbox">
+        Drop here to merge
+    </div>
+    <div id="defaultDropbox" class="dropbox">
+        Drop here for default processing
+    </div>
+    <div id="defaultPlotsDropbox" class="dropbox">
+        Drop here for default processing + plots
+    </div>
+</div>
+<div class="docs-button-container">
+    <a href="https://your-docs-url.com" target="_blank" class="docs-button">Read the Docs</a>
+</div>
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-wheel"></div>
+    <p id="loadingText" class="loading-text"></p>
+</div>
+<script src="renderer.js"></script>
+</body>
+</html>
