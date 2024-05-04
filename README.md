@@ -3,9 +3,9 @@
 **ctdfjorder-lite** is a graphical user interface (GUI) application for processing and analyzing CTD (Conductivity, Temperature, Depth) data. It provides a user-friendly interface for running the **CTDFjorder Python package** without the need for command-line interaction.
 
 ## Documentation
-[CTDFjorder Python package](https://github.com/nikothomas/CTDFjorder)
+- [CTDFjorder Python package](https://github.com/nikothomas/CTDFjorder)
 
-[Read the Docs](#https://nikothomas.github.io/CTDFjorder/CTDFjorder/CTDFjorder.html)
+- [Read the Docs](#https://nikothomas.github.io/CTDFjorder/CTDFjorder/CTDFjorder.html)
 
 ## Installation
 Requires python
