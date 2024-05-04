@@ -6,6 +6,7 @@
 
 ![Homescreen](screenshot.png) 
 </div>
+
 ## Documentation
 - **Light reading on the backend package:**
   - [CTDFjorder Python package](https://github.com/nikothomas/CTDFjorder)
