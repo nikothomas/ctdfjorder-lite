@@ -9,6 +9,7 @@ module.exports = {
     icon: join(process.cwd(), "assets", "icon.icns"),
     extraResource: [
       join(process.cwd(), "assets", "icon.icns"), // Add the ICNS file as an extra resource
+      join(process.cwd(), "venv")
     ]
   },
   rebuildConfig: {},
