@@ -49,8 +49,8 @@ function createMainWindow() {
         }
 
         // Run the Python script
-        const pythonPath = join(process.resourcesPath, 'venv', 'bin', 'python');
-        const scriptPath = join(process.resourcesPath, 'venv', 'bin', 'CTDFjorder-cli');
+        const pythonPath = join(__dirname, 'venv', 'bin', 'python');
+        const scriptPath = join(__dirname, 'venv', 'bin', 'CTDFjorder-cli');
         const args = [type, plots || 'False'];
 
         pythonProcess = spawn(pythonPath, [scriptPath, ...args], {
@@ -67,18 +67,19 @@ function createMainWindow() {
 async function setupEnvironment() {
     createLoadingWindow();
 
-    const venvPath = join(process.resourcesPath, 'venv');
+    const venvPath = join(__dirname, 'venv');
 
     try {
         // Check if virtual environment exists using sudo-prompt
-        sudo.exec(`test -d "${venvPath}"`, {name: 'ctdfjorder-lite'},
+        sudo.exec(`test -d "${venvPath}"`, {name: 'Electron'},
             function(error, stdout, stderr) {
                 if (error) {
                     console.log('Virtual environment does not exist. Creating...');
                     try {
                         // Create virtual environment with Python 3.11 using sudo-prompt
-                        const createVenvCommand = `python3.11 -m venv "${venvPath}"`;
-                        sudo.exec(createVenvCommand, {name: 'ctdfjorder-lite'},
+                        const createVenvCommand = `python3.11 -m venv ${venvPath}`;
+                        console.log(createVenvCommand)
+                        sudo.exec(createVenvCommand, {name: 'Electron'},
                             function(error, stdout, stderr) {
                                 if (error) {
                                     console.error('Failed to create virtual environment:', stderr);
@@ -112,11 +113,11 @@ async function setupEnvironment() {
 }
 
 async function installPackage() {
-    const venvPath = join(process.resourcesPath, 'venv');
+    const venvPath = join(__dirname, 'venv');
 
     // Install ctdfjorder package using sudo-prompt
     const installCommand = `"${join(venvPath, 'bin', 'pip')}" install ctdfjorder==0.0.41`;
-    sudo.exec(installCommand, {name: 'ctdfjorder-lite'},
+    sudo.exec(installCommand, {name: 'Electron'},
         function(error, stdout, stderr) {
             if (error) {
                 console.error('Failed to install ctdfjorder package:', stderr);
