@@ -73,11 +73,31 @@ async function setupEnvironment() {
         await execPromise(`test -d "${venvPath}"`);
         console.log('Virtual environment already exists.');
     } catch (error) {
+        console.log('Virtual environment does not exist. Creating...');
+
+        try {
+            // Create virtual environment with Python 3.11
+            await execPromise(`python3.11 -m venv "${venvPath}"`);
+            console.log('Virtual environment created successfully with Python 3.11.');
+        } catch (error) {
+            console.error('Failed to create virtual environment. Please run the app as an administrator.', error);
+            dialog.showErrorBox('Permission Denied', 'Failed to create virtual environment. Please run the app as an administrator.');
+            app.quit();
+            return;
+        }
+    }
+
+    // Install ctdfjorder package
+    try {
+        await execPromise(`"${join(venvPath, 'bin', 'pip')}" install ctdfjorder==0.0.39`);
+        console.log('ctdfjorder package installed successfully.');
+    } catch (error) {
         console.error('Failed to install ctdfjorder package. Please run the app as an administrator.', error);
         dialog.showErrorBox('Permission Denied', 'Failed to install ctdfjorder package. Please run the app as an administrator.');
         app.quit();
         return;
     }
+
     loadingWindow.close();
     createMainWindow();
     mainWindow.once('ready-to-show', () => {
