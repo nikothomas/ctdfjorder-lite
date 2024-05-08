@@ -48,11 +48,22 @@ function createMainWindow() {
             console.log('chdir: ' + err);
         }
 
-        // Run the Python script
+        // Run the Python script based on the 'type' argument
         const pythonPath = join(__dirname, 'venv', 'bin', 'python');
-        const scriptPath = join(__dirname, 'venv', 'bin', 'CTDFjorder-cli');
-        const args = [type, plots || 'False'];
+        const scriptPath = join(__dirname, 'venv', 'bin', 'ctdfjorder-cli');
+        let args;
 
+        if (type === 'merge') {
+            args = ['merge'];
+        } else if (type === 'default') {
+            args = ['default', plots || 'False'];
+        } else {
+            console.error('Invalid type argument:', type);
+            return;
+        }
+        console.log(pythonPath)
+        console.log(scriptPath)
+        console.log(args)
         pythonProcess = spawn(pythonPath, [scriptPath, ...args], {
             stdio: 'ignore',
         });
@@ -116,7 +127,8 @@ async function installPackage() {
     const venvPath = join(__dirname, 'venv');
 
     // Install ctdfjorder package using sudo-prompt
-    const installCommand = `"${join(venvPath, 'bin', 'pip')}" install ctdfjorder==0.0.41`;
+    const installCommand = `${join(venvPath, 'bin', 'python')} -m pip install ctdfjorder==0.0.43`;
+    console.log(installCommand)
     sudo.exec(installCommand, {name: 'Electron'},
         function(error, stdout, stderr) {
             if (error) {
